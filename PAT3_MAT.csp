@@ -1,0 +1,54 @@
+﻿////////////////cP Sudoku//////////////////
+//Yezhou Liu
+
+#define M 4; //problem size 
+#define FAC_M 23;
+//when n = 4
+var r = [1, 2, 3, 4, 1, 2, 4, 3, 1, 3, 2, 4, 1, 3, 4, 2, 1, 4, 2, 3, 1, 4, 3, 2, 2, 1, 3, 4, 2, 1, 4, 3, 2, 3, 1, 4, 2, 3, 4, 1, 2, 4, 1, 3, 2, 4, 3, 1, 3, 1, 2, 4, 3, 1, 4, 2, 3, 2, 1, 4, 3, 2, 4, 1, 3, 4, 1, 2, 3, 4, 2, 1, 4, 1, 2, 3, 4, 1, 3, 2, 4, 2, 1, 3, 4, 2, 3, 1, 4, 3, 1, 2, 4, 3, 2, 1];	//term rows
+var t[4*M];	//index is L, value is r
+var l = 1; //term l
+var state = 2;
+var promoter_valid = true;
+
+R5() = rule7{
+	if(state == 2 && l == M + 1){
+		l = 1;
+		state = 3;
+	}
+} -> if (state == 3){Skip} else {R6()};
+
+R6() = []i:{0..FAC_M-1}@ rule6{
+	if (state == 2){ //state check
+		promoter_valid = true;
+		var j = 0;
+		while (j < M){
+			if (t[j*4] == r[i*4] && t[j*4+1] == r[i*4+1] && t[j*4+2] == r[i*4+2] && t[j*4+3] == r[i*4+3]){promoter_valid = false;}
+			j++;
+		}
+		if(promoter_valid){
+			t[(l-1)*4] = r[i*4];
+			t[(l-1)*4+1] = r[i*4+1];
+			t[(l-1)*4+2] = r[i*4+2];
+			t[(l-1)*4+3] = r[i*4+3];
+		}
+		state = 2;
+	}
+} -> if (promoter_valid){R7()} else{Skip};	//Skip to save model checking memory
+
+R7() = rule7{
+	if (state == 2){
+		state = 2;
+	}
+} -> R8();
+
+R8() = rule8{
+	if(state == 2){
+		l = l + 1;
+		state = 2;
+	}
+} -> R5();
+
+#assert R5() nonterminating;
+#assert R5() deadlockfree;
+#assert R5() divergencefree;
+#assert R5() deterministic;
