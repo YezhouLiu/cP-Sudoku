@@ -7,12 +7,12 @@
 #define M 9; //problem size 
 var a = [1,2,3,4,5,6,7,8,9];	//term a
 
-var c[M];	//index is L-1, value is V
+var c[M];	//index: L-1, value: V
 var l = 1; //term l
 var state = 1;
 var promoter_valid = true;
 
-R1() = rule3{
+R1() = rule1{
 	if(state == 1 && l == M + 1){
 		l = 1;
 		state = 2;
@@ -51,61 +51,3 @@ R4() = rule4{
 #assert R1() deadlockfree;
 #assert R1() divergencefree;
 #assert R1() deterministic;
-
-
-/*
-#define s0reached state == 0;
-#define s1reached state == 1;
-#define s2reached state == 2;
-#define s3reached state == 3;
-
-#define N 4;
-var set = [1,2,3,4];
-#define goal sum == 10;
-
-var used[N];
-var not_used[N];
-var output[N];
-var not_found[N];
-
-var sum;
-var size;
-var state = 0;
-
-S0() = []i:{0..(N-1)}@ rule1{
-	if(state == 0){
-	not_used = set;
-	sum = 0;
-	size = 0;
-	state = 1;
-	}
-	}-> S1_1();
-	
-S1_1() = check_r2{if(goal && state == 1){state = 2;}} 
-		-> check_r3{if(!goal && state == 1 && size == N){state = 3;}} 
-		-> if(state == 2){S2()} else if(state == 3){S3()} else if(size >= N){Skip} else if(state == 1) {S1_2()};
-
-S1_2() = []i:{0..(N-1)}@ rule4{
-	state = 1;
-	if(not_used[i] != 0)
-	{
-	used[size] = not_used[i];
-	not_used[i] = 0;
-	sum = sum + used[size];
-	size++;
-	}
-	} -> S1_1();
-
-S2() = rule2{output=used;} -> Skip;
-S3() = rule3{output=not_found;} -> Skip;
-
-#assert S0() nonterminating;
-#assert S0() deadlockfree;
-#assert S0() divergencefree;
-#assert S0() deterministic;
-#assert S0() reaches goal;
-#assert S0() reaches s2reached;
-#assert S1_2() |= F X s1reached;
-
-*/
-
